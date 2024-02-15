@@ -1,12 +1,42 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import TitleImage from '../assets/WWW-Website-PNG-Photos (1).png'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProjectCard from '../Components/ProjectCard';
 import {Link} from 'react-router-dom'
+import { homeProjectAPI } from '../services/allAPIs';
+import {
+    MDBContainer,
+    MDBNavbar,
+    MDBNavbarBrand
+  } from 'mdb-react-ui-kit';
 function Home() {
+    //api call to get home project details
+    const [homeProject,setHomeProject]= useState([])//to hold home project details
+    const getHomeProject=async()=>{
+        const result = await homeProjectAPI()
+        console.log(result);
+        if(result.status===200){
+            setHomeProject(result.data)
+            console.log(homeProject);
+        }
+        else{
+            console.log("Api fetching project details failed");
+        }
+    }
+    useEffect(()=>{
+        getHomeProject()
+    },[])
   return (
     <div>
+        <MDBNavbar light bgColor='dark' className='text-white'>
+        <MDBContainer fluid>
+          <MDBNavbarBrand href='/' className='text-white'>
+          <i class="fa-solid fa-laptop-code fa-fad mx-3 fs-1 text-white"></i>
+          Prject Fair
+          </MDBNavbarBrand>
+        </MDBContainer>
+      </MDBNavbar>
         <div className="container">
             <div className="row">
                 <div className="col-6 p-5">
@@ -29,25 +59,20 @@ function Home() {
                     <h2 className='text-center m-4'>Explore Projects</h2>
                     <marquee >
                         <Row>
-                            <Col>
-                            <ProjectCard/>
-                            </Col>
-                            <Col>
-                            <ProjectCard/>
-                            </Col>
-                            <Col>
-                            <ProjectCard/>
-                            </Col>
+                          {//array
+                            homeProject.length>0?homeProject.map(item=>(
+                                <Col>
+                                <ProjectCard project={item}/> 
+                                </Col>
+                            )):"empty array"
+                          }
+
                         </Row>
                     </marquee>
                 </div>
             </div>
 
-            <Link to={'/project'}>
-            <div className='text-center'>
-                <button className='btn btn-dark btn-lg px-5 text-white rounded-pill shadow m-5 '>View Projects</button>
-            </div>
-            </Link>
+           
         </div>
     </div>
   )

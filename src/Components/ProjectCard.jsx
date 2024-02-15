@@ -6,7 +6,10 @@ import { useState } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
-function ProjectCard() {
+import { baseUrl } from '../services/baseUrl';
+
+function ProjectCard({project}) {
+  console.log(project);
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -14,9 +17,9 @@ function ProjectCard() {
   return (
     <div> 
     <Card onClick={handleShow} style={{ width: '18rem' }} className='mb-5'>
-    <Card.Img variant="top" src={img} />
+    <Card.Img variant="top" src={project?`${baseUrl}/uploads/${project.projectImage}`:"empty image"} />
     <Card.Body>
-      <Card.Title className='text-center'>Project Title</Card.Title>
+      <Card.Title className='text-center'>{project?.title}</Card.Title>
     </Card.Body>
   </Card>
   
@@ -24,25 +27,25 @@ function ProjectCard() {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Project title</Modal.Title>
+          <Modal.Title>{project?.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
             <Row>
                 <Col>
-                <img src={img} width={'100%'} alt="" />
+                <img src={project?`${baseUrl}/uploads/${project.projectImage}`:"empty image"} width={'100%'} alt="" />
                 </Col>
                 <Col>
-                <h3>Project Title</h3>
-                <p> <span><b>Project Overview</b></span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus omnis neque pariatur perspiciatis id delectus.</p>
-                <p>Technology Used : <span><b>React Node Express MongoDB</b></span></p>
+                <h3>{project?.title}</h3>
+                <p> <span><b>Project Overview</b></span> {project?.overview}</p>
+                <p>Technology Used : <span><b>{project?.language}</b></span></p>
                 </Col>
             </Row>
         </Modal.Body>
         <Modal.Footer className='d-flex justify-content-evenly'>
-          <a href='' variant="secondary text-dark" onClick={handleClose}>
+          <a href={project?.github} variant="secondary text-dark" onClick={handleClose}>
           <i class="fa-brands fa-github  text-white fs-2 fa-beat-fade"></i>
           </a>
-          <a href='' variant="primary" onClick={handleClose}>
+          <a href={project?.link} variant="primary" onClick={handleClose}>
           <i class="fa-solid fa-link text-white fs-2 fa-fade"></i>
           </a>
         </Modal.Footer>

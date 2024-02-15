@@ -1,11 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import img from "../assets/WWW-Website-PNG-Photos (1).png";
-import { commonAPI } from "../services/commonAPI";
+import { addProjectAPI } from "../services/allAPIs";
+import { addProjectContextResponse } from "../ContextAPI/ContextShare";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AddProject() {
+
+  const { addProjectRes, setAddProjectRes } = useContext(addProjectContextResponse);
+
   //to hold token from sessionStorage
   const [token, setToken] = useState("");
   //to get token from sessionStorage
@@ -41,6 +47,7 @@ function AddProject() {
   console.log(projectDetails);
 
   const projectAdd = async () => {
+    
     const { title, language, github, link, overview, projectImage } =
       projectDetails;
     if (!title || !language || !github || !link || !overview || !projectImage) {
@@ -54,18 +61,31 @@ function AddProject() {
       reqBody.append("link", link);
       reqBody.append("overview", overview);
       reqBody.append("projectImage", projectImage);
-      let reqHeader
-      if (token) {
-        reqHeader = {
+
+      // let reqHeader
+      
+      const  reqHeader = {
           "Content-Type": "multipart/form-data",//It indicates the req containes a image file
           "Authorization": `Bearer ${token}`//To send token from client side to server side
         };
-      }
+      
+
       //api call
-      const result = await commonAPI(reqBody,reqHeader);
+      const result = await addProjectAPI(reqBody,reqHeader);
       console.log(result);
       if (result.status === 200) {
-        console.log(result.data);
+        toast.success("Project added successfully...");
+        // alert("Project added successfully...")
+        setAddProjectRes(result.data)//contextAPI state value assigned 
+       console.log(result.data); 
+        handleClose()//to close the modal window 
+
+        setProjectDetails({ //after adding project details, we need to set empty object to the state
+          title:"",language:"",github:"",link:"",overview:"",projectImage:""
+        })
+
+        setPreview("")//img empty
+
       } else {
         console.log(result.response.data);
       }
@@ -77,6 +97,8 @@ function AddProject() {
       <button onClick={handleShow} className="btn btn-success">
         Add project
       </button>
+      <ToastContainer position="top-right" autoClose={5000} theme="dark" />
+
       <Modal
         show={show}
         onHide={handleClose}
@@ -174,6 +196,7 @@ function AddProject() {
           </Button>
         </Modal.Footer>
       </Modal>
+
     </div>
   );
 }

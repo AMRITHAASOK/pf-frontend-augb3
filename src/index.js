@@ -6,12 +6,17 @@ import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import './bootstrap.min.css'
 import { BrowserRouter } from 'react-router-dom';
+import ContextShare from './ContextAPI/ContextShare';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-    <App />
-    </BrowserRouter>
+      <ContextShare>
+          <BrowserRouter>
+                <App />
+        </BrowserRouter>
+      </ContextShare>
   </React.StrictMode>
 );
 
